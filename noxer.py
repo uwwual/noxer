@@ -38,14 +38,23 @@ def install_tool(tool):
 def find_nox_installation_path():
     for process in psutil.process_iter(['pid', 'name', 'exe']):
         if 'Nox.exe' in process.info['name']:
+            print(os.path.dirname(process.info['exe']));
             return os.path.dirname(process.info['exe'])
     return None
     
 #ADB Default Port of Nox Player : 62001,62025,62026
-def connect_to_nox_adb(ip='127.0.0.1', port=62001):
+################## change Port!!!!!!!!!!!!!!!!!!!!!!!! ##################
+def connect_to_nox_adb(ip='127.0.0.1', port=62025):
     if nox_installation_path:
         adb_command = f'\"{nox_installation_path}\\nox_adb.exe\" connect {ip}:{port}'
-        result = subprocess.run(adb_command, shell=True, text=True, capture_output=True)
+        result = subprocess.run(
+        adb_command,
+        shell=True,
+        capture_output=True,
+        encoding='utf-8',  # or "cp949" if your output is genuinely in CP949
+        errors='replace'   # or "ignore"
+        )
+        print(result.stdout.strip());
         return result.stdout.strip()
     else:
         return "Nox player not installed."
